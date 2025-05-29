@@ -15,7 +15,6 @@ void skaitytiFaila(string failas, map<string, int> &zodziai)
             istringstream iss(eilute);
             string zodis;
 
-            cout << eilute << endl;
             while (iss >> zodis)
             {
                 char raide = zodis.back();
@@ -36,7 +35,6 @@ void skaitytiFaila(string failas, map<string, int> &zodziai)
                 if (!zodis.empty())
                 {
                     zodziai[zodis]++;
-                    cout << zodis << endl;
                 }
             }
             eilute.clear();
@@ -55,7 +53,8 @@ void rasytiFaila(string failas, map<string, int> zodziai)
     ofstream fr(failas);
     for (auto zodis : zodziai)
     {
-        fr << zodis.first << " " << zodis.second << endl;
+        if (zodis.second > 1)
+            fr << zodis.first << " " << zodis.second << endl;
     }
     fr.close();
 }

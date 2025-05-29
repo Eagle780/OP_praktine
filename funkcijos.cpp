@@ -1,6 +1,6 @@
 #include "funkcijos.h"
 
-void skaitytiFaila(string failas, set<string> &zodziai)
+void skaitytiFaila(string failas, map<string, int> &zodziai)
 {
     cout << "Skaitomas teksto failas..." << endl;
     try
@@ -15,6 +15,7 @@ void skaitytiFaila(string failas, set<string> &zodziai)
             istringstream iss(eilute);
             string zodis;
 
+            cout << eilute << endl;
             while (iss >> zodis)
             {
                 char raide = zodis.back();
@@ -32,8 +33,13 @@ void skaitytiFaila(string failas, set<string> &zodziai)
                           [](unsigned char s)
                           { return tolower(s); });
 
-                zodziai.insert(zodis);
+                if (!zodis.empty())
+                {
+                    zodziai[zodis]++;
+                    cout << zodis << endl;
+                }
             }
+            eilute.clear();
         }
         fd.close();
     }
@@ -44,12 +50,12 @@ void skaitytiFaila(string failas, set<string> &zodziai)
     }
 }
 
-void rasytiFaila(string failas, set<string> zodziai)
+void rasytiFaila(string failas, map<string, int> zodziai)
 {
     ofstream fr(failas);
     for (auto zodis : zodziai)
     {
-        fr << zodis << endl;
+        fr << zodis.first << " " << zodis.second << endl;
     }
     fr.close();
 }

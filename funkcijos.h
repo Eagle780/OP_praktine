@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <set>
+#include <map>
 #include <sstream>
 #include <algorithm>
 #include <cctype>
@@ -14,11 +14,11 @@ using std::getline;
 using std::ifstream;
 using std::ios_base;
 using std::istringstream;
+using std::map;
 using std::ofstream;
-using std::set;
 using std::string;
 using std::tolower;
 using std::transform;
 
-void skaitytiFaila(string failas, set<string> &zodziai);
-void rasytiFaila(string failas, set<string> zodziai);
+void skaitytiFaila(string failas, map<string, int> &zodziai);
+void rasytiFaila(string failas, map<string, int> zodziai);

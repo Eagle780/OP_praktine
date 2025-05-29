@@ -3,7 +3,7 @@
 
 int main()
 {
-    set<string> zodziai;
+    map<string, int> zodziai;
     skaitytiFaila("test.txt", zodziai);
     rasytiFaila("ats.txt", zodziai);
 

@@ -22,5 +22,10 @@ using std::string;
 using std::tolower;
 using std::transform;
 
-void skaitytiFaila(string failas, map<string, int> &zodziai1, map<string, set<int>> &zodziai2);
+void skaitytiFaila(string failas, map<string, int> &zodziai1, map<string, set<int>> &zodziai2, set<string> domenai, set<string> &nuorodos);
+void skaitytiDomenus(string failas, set<string> &domenai);
 void rasytiFaila(string failas1, string failas2, map<string, int> zodziai1, map<string, set<int>> zodziai2);
+void rasytiLinkus(string failas, set<string> nuorodos);
+string salintiPaskutine(string &zodis, string sim);
+string salintiPirma(string &zodis, string sim);
+bool arSkaicius(string word);

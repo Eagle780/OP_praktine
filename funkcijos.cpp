@@ -1,13 +1,13 @@
 #include "funkcijos.h"
 
-void skaitytiFaila(string failas, map<string, int> &zodziai1, map<string, set<int>> &zodziai2)
+void skaitytiFaila(string failas, map<string, int> &zodziai1, map<string, set<int>> &zodziai2, set<string> domenai, set<string> &nuorodos)
 {
     cout << "Skaitomas teksto failas..." << endl;
     try
     {
         ifstream fd(failas);
         string eilute;
-        string simbolis = ".,/-_!?%()[]";
+        string simbolis = ".,-_!?%()[]";
         int eile = 0;
 
         while (getline(fd, eilute))
@@ -18,18 +18,30 @@ void skaitytiFaila(string failas, map<string, int> &zodziai1, map<string, set<in
 
             while (iss >> zodis)
             {
-                char raide = zodis.back();
-                if (simbolis.find(raide) != string::npos)
+                zodis = salintiPaskutine(zodis, simbolis);
+                zodis = salintiPirma(zodis, simbolis);
+                if (zodis == "")
+                    continue;
+                if (zodis.substr(0, 7) == "http://" || zodis.substr(0, 8) == "https://")
                 {
-                    if (zodis.length() == 2 && raide == '.')
-                        continue;
-                    zodis.pop_back();
+                    nuorodos.insert(zodis);
+                    continue;
                 }
-                raide = zodis.front();
-                if (simbolis.find(raide) != string::npos)
+                for (const string &dom : domenai)
                 {
-                    zodis.erase(0, 1);
+
+                    if (zodis.size() >= dom.size())
+                    {
+                        if (zodis.substr(zodis.size() - dom.size()) == dom)
+                        {
+                            nuorodos.insert(zodis);
+                            continue;
+                        }
+                    }
                 }
+
+                if (arSkaicius(zodis))
+                    continue;
 
                 transform(zodis.begin(), zodis.end(), zodis.begin(),
                           [](unsigned char s)
@@ -42,6 +54,28 @@ void skaitytiFaila(string failas, map<string, int> &zodziai1, map<string, set<in
                 }
             }
             eilute.clear();
+        }
+        fd.close();
+    }
+    catch (ios_base::failure &e)
+    {
+        cout << "Nepavyko atidaryti failo\n";
+        return;
+    }
+}
+
+void skaitytiDomenus(string failas, set<string> &domenai)
+{
+    cout << "Skaitomas domenu failas..." << endl;
+    try
+    {
+        ifstream fd(failas);
+        string dom;
+
+        while (fd >> dom)
+        {
+            dom = "." + dom;
+            domenai.insert(dom);
         }
         fd.close();
     }
@@ -76,4 +110,49 @@ void rasytiFaila(string failas1, string failas2, map<string, int> zodziai1, map<
         }
     }
     fr2.close();
+}
+
+void rasytiLinkus(string failas, set<string> nuorodos)
+{
+    ofstream fr(failas);
+    for (string linkas : nuorodos)
+    {
+        fr << linkas << endl;
+    }
+    fr.close();
+}
+
+string salintiPaskutine(string &zodis, string sim)
+{
+    char raide = zodis.back();
+    if (sim.find(raide) != string::npos)
+    {
+        if (zodis.length() == 2 && raide == '.')
+        {
+            zodis = "";
+            return zodis;
+        }
+        zodis.pop_back();
+        salintiPaskutine(zodis, sim);
+    }
+    return zodis;
+}
+
+string salintiPirma(string &zodis, string sim)
+{
+    char raide = zodis.front();
+    if (sim.find(raide) != string::npos)
+    {
+        zodis.erase(0, 1);
+        salintiPirma(zodis, sim);
+    }
+    return zodis;
+}
+
+bool arSkaicius(string zodis)
+{
+    istringstream iss(zodis);
+    double d;
+    char c;
+    return (iss >> d) && !(iss >> c);
 }

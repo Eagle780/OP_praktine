@@ -7,8 +7,20 @@ void skaitytiFaila(string failas, map<string, int> &zodziai1, map<string, set<in
     {
         ifstream fd(failas);
         string eilute;
-        string simbolis = ".,-_!?%()[]";
+        string simbolis = ".,-_!?%()[]–—";
         int eile = 0;
+
+        map<string, string> lietuviskosMazosios = {
+            {"Ą", "ą"},
+            {"Č", "č"},
+            {"Ę", "ę"},
+            {"Ė", "ė"},
+            {"Į", "į"},
+            {"Š", "š"},
+            {"Ų", "ų"},
+            {"Ū", "ū"},
+            {"Ž", "ž"},
+        };
 
         while (getline(fd, eilute))
         {
@@ -43,9 +55,7 @@ void skaitytiFaila(string failas, map<string, int> &zodziai1, map<string, set<in
                 if (arSkaicius(zodis))
                     continue;
 
-                transform(zodis.begin(), zodis.end(), zodis.begin(),
-                          [](unsigned char s)
-                          { return tolower(s); });
+                zodis = mazosiosRaides(zodis, lietuviskosMazosios);
 
                 if (!zodis.empty())
                 {
@@ -127,7 +137,7 @@ string salintiPaskutine(string &zodis, string sim)
     char raide = zodis.back();
     if (sim.find(raide) != string::npos)
     {
-        if (zodis.length() == 2 && raide == '.')
+        if (zodis.length() <= 2 && raide == '.')
         {
             zodis = "";
             return zodis;
@@ -155,4 +165,31 @@ bool arSkaicius(string zodis)
     double d;
     char c;
     return (iss >> d) && !(iss >> c);
+}
+
+string mazosiosRaides(const string &zodis, map<string, string> &lietuviskosMazosios)
+{
+    string zodisMaz;
+    for (int i = 0; i < zodis.size();)
+    {
+        unsigned char r = zodis[i];
+        int raides_ilgis = 1;
+
+        if ((r & 0xE0) == 0xC0)
+            raides_ilgis = 2;
+        else if ((r & 0xF0) == 0xE0)
+            raides_ilgis = 3;
+        else if ((r & 0xF8) == 0xF0)
+            raides_ilgis = 4;
+
+        string utf8_raide = zodis.substr(i, raides_ilgis);
+        if (lietuviskosMazosios.count(utf8_raide))
+            zodisMaz += lietuviskosMazosios[utf8_raide];
+        else
+            zodisMaz += utf8_raide;
+
+        i += raides_ilgis;
+    }
+
+    return zodisMaz;
 }

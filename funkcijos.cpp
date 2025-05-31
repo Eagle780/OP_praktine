@@ -30,10 +30,10 @@ void skaitytiFaila(string failas, map<string, int> &zodziai1, map<string, set<in
 
             while (iss >> zodis)
             {
-                zodis = salintiPaskutine(zodis, simbolis);
-                zodis = salintiPirma(zodis, simbolis);
+                salintiPaskutine(zodis, simbolis);
                 if (zodis == "")
                     continue;
+                salintiPirma(zodis, simbolis);
                 if (zodis.substr(0, 7) == "http://" || zodis.substr(0, 8) == "https://")
                 {
                     nuorodos.insert(zodis);
@@ -54,6 +54,10 @@ void skaitytiFaila(string failas, map<string, int> &zodziai1, map<string, set<in
 
                 if (arSkaicius(zodis))
                     continue;
+
+                transform(zodis.begin(), zodis.end(), zodis.begin(),
+                          [](unsigned char s)
+                          { return tolower(s); });
 
                 zodis = mazosiosRaides(zodis, lietuviskosMazosios);
 
@@ -132,31 +136,29 @@ void rasytiLinkus(string failas, set<string> nuorodos)
     fr.close();
 }
 
-string salintiPaskutine(string &zodis, string sim)
+void salintiPaskutine(string &zodis, string sim)
 {
     char raide = zodis.back();
-    if (sim.find(raide) != string::npos)
+    while (!zodis.empty() && sim.find(raide) != string::npos)
     {
         if (zodis.length() <= 2 && raide == '.')
         {
-            zodis = "";
-            return zodis;
+            zodis.clear();
+            return;
         }
         zodis.pop_back();
-        salintiPaskutine(zodis, sim);
+        raide = zodis.back();
     }
-    return zodis;
 }
 
-string salintiPirma(string &zodis, string sim)
+void salintiPirma(string &zodis, string sim)
 {
     char raide = zodis.front();
-    if (sim.find(raide) != string::npos)
+    while (!zodis.empty() && sim.find(raide) != string::npos)
     {
         zodis.erase(0, 1);
-        salintiPirma(zodis, sim);
+        raide = zodis.front();
     }
-    return zodis;
 }
 
 bool arSkaicius(string zodis)

@@ -26,7 +26,7 @@ void skaitytiFaila(string failas, map<string, int> &zodziai1, map<string, set<in
 void skaitytiDomenus(string failas, set<string> &domenai);
 void rasytiFaila(string failas1, string failas2, map<string, int> zodziai1, map<string, set<int>> zodziai2);
 void rasytiLinkus(string failas, set<string> nuorodos);
-string salintiPaskutine(string &zodis, string sim);
-string salintiPirma(string &zodis, string sim);
+void salintiPaskutine(string &zodis, string sim);
+void salintiPirma(string &zodis, string sim);
 bool arSkaicius(string word);
 string mazosiosRaides(const string &zodis, map<string, string> &lietuviskosMazosios);
